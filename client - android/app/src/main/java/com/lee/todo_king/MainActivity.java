@@ -55,8 +55,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        fetchTodoList(); // 할 일 목록 받아오기
     }
 
+    // 할 일 목록 받아오기 메서드
+    private void fetchTodoList() {
+        // 서버 URL
+        String url = "http://10.0.2.2:8080/api/todo/lists";
+
+        // HTTP 요청 생성(미사일)
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        // HTTP 클라이언트 생성(미사일 발사대)
+        OkHttpClient client = new OkHttpClient();
+
+        // 비동기 요청 보내기(발사)
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                // 요청 실패 처리
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                // 요청 성공 처리
+            }
+        });
+    }
+
+    // 할 일 등록 메서드
     private void sendAddTodoRequest(String todoText) {
         // 서버 URL
         String url = "http://10.0.2.2:8080/api/todo/create"; // 호스트 머신의 localhost에 접근하려면 10.0.2.2 로 해야
@@ -79,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 // 요청 실패 처리
-                Log.e("TodoListRequest", "Request failed: " + e.getMessage());
+                Log.e("MainActivity", "Request failed: " + e.getMessage());
             }
 
             @Override
@@ -87,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 // 요청 성공 처리
                 if(response.isSuccessful()) {
                     String todoList = response.body() != null ? response.body().string() : "";
-                    Log.d("TodoListRequest", "Request success(" + response.code() + "): " + todoList);
+                    Log.d("MainActivity", "Request success(" + response.code() + "): " + todoList);
                 } else {
-                    Log.e("TodoListRequest", "Request failed with code " + response.code());
+                    Log.e("MainActivity", "Request failed with code " + response.code());
                 }
             }
         });

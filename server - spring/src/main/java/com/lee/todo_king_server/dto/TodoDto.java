@@ -15,8 +15,4 @@ public class TodoDto {
     public TodoEntity toEntity() {
         return new TodoEntity(this.text);
     }
-
-    public static TodoDto createdDto(TodoEntity entity) {
-        return new TodoDto(entity.getId(), entity.getText());
-    }
 }

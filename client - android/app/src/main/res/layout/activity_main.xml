@@ -5,14 +5,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <!-- 할 일 목록 영역 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/todoList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#000000"
         app:layout_constraintBottom_toTopOf="@id/todoInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

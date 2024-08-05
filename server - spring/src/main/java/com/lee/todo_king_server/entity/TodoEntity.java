@@ -1,5 +1,6 @@
 package com.lee.todo_king_server.entity;
 
+import com.lee.todo_king_server.dto.TodoDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,5 +21,9 @@ public class TodoEntity {
 
     public TodoEntity(String text) {
         this.text = text;
+    }
+
+    public TodoDto toDto() {
+        return new TodoDto(this.getId(), this.getText());
     }
 }

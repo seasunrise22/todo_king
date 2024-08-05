@@ -20,10 +20,11 @@ public class TodoApiController {
     // 전체 할 일 목록 조회
     @GetMapping("/api/todo/lists")
     public ResponseEntity<List<TodoDto>> lists() {
-//        List<TodoDto> dtoList = todoService.lists();
+        List<TodoDto> dtoList = todoService.lists();
 
-        todoService.lists();
-        return ResponseEntity.ok().build();
+        return (dtoList != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(dtoList) :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     // 할 일 추가

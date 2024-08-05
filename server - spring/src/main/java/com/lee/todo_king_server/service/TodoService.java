@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TodoService {
     @Autowired
     TodoRepository todoRepository;
 
+    // 할 일 목록 생성
     @Transactional
     public TodoDto create(TodoDto dto) {
         // 클라이언트로부터 json 데이터 잘 받았나 테스트
@@ -27,13 +29,19 @@ public class TodoService {
         TodoEntity createdEntity = todoRepository.save(itemEntity);
         System.out.println(createdEntity.toString()); // id값 할당 잘 됐나 테스트
 
-        return TodoDto.createdDto(createdEntity);
+        // 변환된 엔티티 객체를 dto객체로 변환
+        TodoDto createdDto = createdEntity.toDto();
+        System.out.println(createdDto.toString());
+
+        return createdDto;
     }
 
     // 전체 할 일 목록 반환
-//    public List<TodoDto> lists() {
-    public void lists() {
+    public List<TodoDto> lists() {
         List<TodoEntity> todoList = todoRepository.findAll();
         System.out.println(todoList);
+
+        // tdoList 하나하나 꺼내서 TodoEntity를 TodoDto로 변환
+        return todoList.stream().map(TodoEntity::toDto).collect(Collectors.toList());
     }
 }

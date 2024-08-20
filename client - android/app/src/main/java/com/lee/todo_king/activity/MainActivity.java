@@ -1,10 +1,7 @@
 package com.lee.todo_king.activity;
 
 import android.os.Bundle;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -31,10 +28,6 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -77,7 +70,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // 할 일 목록 받아오기 메서드
+    // 할 일 등록 메서드(CREATE)
+    private void sendAddTodoRequest(String todoText) {
+        // 서버 URL
+        String url = "http://10.0.2.2:8080/api/todo/create"; // 호스트 머신의 localhost에 접근하려면 10.0.2.2 로 해야
+        networkClient.sendAddTodoRequest(url, todoText, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                // 요청 실패 처리
+                Log.e("MainActivity", "sendAddTodoRequest() failed: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                // 요청 성공 처리
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> fetchTodoList());
+                } else {
+                    Log.e("MainActivity", "sendAddTodoRequest() failed with code " + response.code());
+                }
+            }
+        });
+    }
+
+    // 할 일 목록 받아오기 메서드(READ)
     private void fetchTodoList() {
         // 서버 URL
         String url = "http://10.0.2.2:8080/api/todo/lists";
@@ -115,26 +131,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // 할 일 등록 메서드
-    private void sendAddTodoRequest(String todoText) {
+    // 할 일 수정 메서드(UPDATE)
+    public void sendUpdateTodoRequest(TodoDto todo) {
         // 서버 URL
-        String url = "http://10.0.2.2:8080/api/todo/create"; // 호스트 머신의 localhost에 접근하려면 10.0.2.2 로 해야
-        networkClient.sendAddTodoRequest(url, todoText, new Callback() {
+        String url = "http://10.0.2.2:8080/api/todo/update";
+        networkClient.sendUpdateTodoRequest(url, todo, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // 요청 실패 처리
-                Log.e("MainActivity", "sendAddTodoRequest() failed: " + e.getMessage());
+
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                // 요청 성공 처리
-                if (response.isSuccessful()) {
-                    runOnUiThread(() -> fetchTodoList());
-                } else {
-                    Log.e("MainActivity", "sendAddTodoRequest() failed with code " + response.code());
-                }
+
             }
         });
+
     }
 }

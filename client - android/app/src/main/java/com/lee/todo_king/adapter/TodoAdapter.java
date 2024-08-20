@@ -1,11 +1,13 @@
 package com.lee.todo_king.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.lee.todo_king.R;
+import com.lee.todo_king.activity.MainActivity;
 import com.lee.todo_king.model.TodoDto;
 
 import java.util.List;
@@ -20,18 +23,20 @@ import java.util.List;
 public class TodoAdapter extends ArrayAdapter<TodoDto> {
     private final List<TodoDto> todoList;
     private final Context context;
+    private final MainActivity mainActivity;
 
-    public TodoAdapter(Context context, List<TodoDto> todoList) {
-        super(context, 0, todoList);
-        this.context = context;
+    public TodoAdapter(MainActivity mainActivity, List<TodoDto> todoList) {
+        super(mainActivity, 0, todoList);
+        this.context = mainActivity;
         this.todoList = todoList;
+        this.mainActivity = mainActivity;
     }
 
     // 데이터 업데이트 메서드
     public void updateData(List<TodoDto> newTodoList) {
         this.todoList.clear(); // 기존 리스트 비우기
         this.todoList.addAll(newTodoList); //새 데이터 추가
-        notifyDataSetChanged(); // 어댑터에 데이터 변경 알림
+        notifyDataSetChanged(); // 어댑터에 데이터 변경 알림(다시 getView 메서드 호출)
     }
 
     @NonNull
@@ -53,8 +58,28 @@ public class TodoAdapter extends ArrayAdapter<TodoDto> {
 
         // 수정 버튼 클릭 리스너 설정
         editButton.setOnClickListener(v -> {
-            // 수정 로직 추가
-            Toast.makeText(context, "수정 기능 구현 전", Toast.LENGTH_SHORT).show();
+            // 다이얼로그 생성
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("할 일 수정");
+
+            // EditText 추가
+            EditText input = new EditText(context);
+            input.setText(todo.getText());
+            builder.setView(input);
+
+            // 확인 버튼 설정
+            builder.setPositiveButton("수정", (dialog, which) -> {
+               String newText = input.getText().toString();
+               todo.setText(newText);
+               mainActivity.sendUpdateTodoRequest(todo);
+               notifyDataSetChanged();
+            });
+
+            // 취소 버튼 설정
+            builder.setNegativeButton("취소", (dialog, which) -> dialog.cancel());
+
+            // 다이얼로그 표시
+            builder.show();
         });
 
         // 삭제 버튼 클릭 리스너 설정

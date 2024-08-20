@@ -17,7 +17,17 @@ public class TodoApiController {
     @Autowired
     TodoService todoService;
 
-    // 전체 할 일 목록 조회
+    // 할 일 추가(CREATE)
+    @PostMapping("/api/todo/create")
+    public ResponseEntity<TodoDto> create(@RequestBody TodoDto dto) {
+        TodoDto createdDto = todoService.create(dto);
+
+        return (createdDto != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(createdDto) :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    // 전체 할 일 목록 조회(READ)
     @GetMapping("/api/todo/lists")
     public ResponseEntity<List<TodoDto>> lists() {
         List<TodoDto> dtoList = todoService.lists();
@@ -27,13 +37,9 @@ public class TodoApiController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    // 할 일 추가
-    @PostMapping("/api/todo/create")
-    public ResponseEntity<TodoDto> create(@RequestBody TodoDto dto) {
-        TodoDto createdDto = todoService.create(dto);
-
-        return (createdDto != null) ?
-                ResponseEntity.status(HttpStatus.OK).body(createdDto) :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    // 할 일 수정(UPDATE)
+    @PostMapping("/api/todo/update")
+    public void update() {
+        System.out.println("수정요청!");
     }
 }

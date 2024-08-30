@@ -39,7 +39,7 @@ public class TodoApiController {
 
     // 할 일 수정(UPDATE)
     @PostMapping("/api/todo/update")
-    public void update() {
-        System.out.println("수정요청!");
+    public void update(@RequestBody TodoDto dto) {
+        System.out.println("수정요청! " + dto);
     }
 }

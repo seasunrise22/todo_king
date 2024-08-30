@@ -1,5 +1,6 @@
 package com.lee.todo_king.network;
 
+import com.google.gson.Gson;
 import com.lee.todo_king.model.TodoDto;
 
 import okhttp3.Callback;
@@ -12,9 +13,10 @@ public class NetworkClient {
     private final OkHttpClient client = new OkHttpClient(); // HTTP 클라이언트 생성
 
     // 할 일 등록 요청(CREATE)
-    public void sendAddTodoRequest(String url, String todoText, Callback responseCallback) {
+    public void sendAddTodoRequest(String url, TodoDto todoDto, Callback responseCallback) {
         MediaType JSON = MediaType.get("application/json; charset=utf-8");
-        String json = "{\"text\": \"" + todoText + "\"}"; // json 형식으로 변환 // {"text": "todoText"}
+//        String json = "{\"text\": \"" + todoText + "\"}"; // json 형식으로 변환 // {"text": "todoText"} Gson 안 쓰고 json 변환하기
+        String json = new Gson().toJson(todoDto);
 
         // HTTP 요청 생성
         RequestBody body = RequestBody.create(json, JSON);
@@ -41,8 +43,20 @@ public class NetworkClient {
     }
 
     // 할 일 수정 요청(UPDATE)
-    public void sendUpdateTodoRequest(String url, TodoDto todoText, Callback responseCallback) {
-        // HTTP 요청 생성
+    public void sendUpdateTodoRequest(String url, TodoDto todoDto, Callback responseCallback) {
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
+        // todoDto 객체를 JSON 형식으로 변환
+        String json = new Gson().toJson(todoDto);
+
+        // HTTP 요청 생성
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        // 비동기 요청 보내기
+        client.newCall(request).enqueue(responseCallback);
     }
 }

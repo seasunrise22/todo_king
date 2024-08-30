@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         addTodoButton.setOnClickListener(view -> {
             String text = todoText.getText().toString();
             if (!text.isEmpty()) {
-                sendAddTodoRequest(text);
+                sendAddTodoRequest(new TodoDto(text));
             } else {
                 Toast.makeText(MainActivity.this, "할 일을 입력하세요.", Toast.LENGTH_SHORT).show();
             }
@@ -71,10 +71,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 할 일 등록 메서드(CREATE)
-    private void sendAddTodoRequest(String todoText) {
+    private void sendAddTodoRequest(TodoDto todoDto) {
         // 서버 URL
         String url = "http://10.0.2.2:8080/api/todo/create"; // 호스트 머신의 localhost에 접근하려면 10.0.2.2 로 해야
-        networkClient.sendAddTodoRequest(url, todoText, new Callback() {
+        networkClient.sendAddTodoRequest(url, todoDto, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 // 요청 실패 처리
@@ -138,14 +138,19 @@ public class MainActivity extends AppCompatActivity {
         networkClient.sendUpdateTodoRequest(url, todo, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                Log.e("MainActivty", "할 일 수정 요청 실패 : " + e.getMessage());
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-
+                if(response.isSuccessful()) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this, "수정 요청 보내긴 했어", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    Log.e("MainActivty", "할 일 수정 요청은 했으나 못 가져옴");
+                }
             }
         });
-
     }
 }
